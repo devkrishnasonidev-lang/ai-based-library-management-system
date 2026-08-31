@@ -1,2 +1,3 @@
 # ai-based-library-management-system
-for-vedam-hackathon
+
+Open aibrary-2.html in browser to use it.
