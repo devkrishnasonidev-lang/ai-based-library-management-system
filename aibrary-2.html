@@ -1,0 +1,1555 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI-Brary</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bangers&family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --ink:#241f17;
+  --green-deep:#1c332c;
+  --green-mid:#2f5045;
+  --green-soft:#4c7166;
+  --brass:#b4874c;
+  --brass-light:#d3ab72;
+  --paper:#efe6d4;
+  --paper-deep:#e6dac0;
+  --card:#faf3e3;
+  --stamp:#a1402f;
+  --line: rgba(36,31,23,0.16);
+  --line-strong: rgba(36,31,23,0.32);
+  --radius-card: 16px;
+  --radius-sm: 10px;
+  --shadow-hard: 5px 5px 0 var(--ink);
+  --shadow-hard-sm: 3px 3px 0 var(--ink);
+  --shadow-hard-lg: 7px 7px 0 var(--ink);
+  --nav-bg: rgba(239,230,212,0.9);
+  --fine-color: var(--stamp);
+  --maxw: 1120px;
+}
+html[data-theme="dark"]{
+  --ink:#efe6d4;
+  --green-deep:#dce7de;
+  --green-mid:#9fc2b0;
+  --green-soft:#7fa494;
+  --brass:#d9ac70;
+  --brass-light:#eccb95;
+  --paper:#161209;
+  --paper-deep:#0f0c07;
+  --card:#231d13;
+  --stamp:#e07458;
+  --line: rgba(239,230,212,0.14);
+  --line-strong: rgba(239,230,212,0.28);
+  --nav-bg: rgba(22,18,9,0.85);
+  --fine-color:#ff9466;
+}
+*{box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{ margin:0; background:var(--paper); color:var(--ink); font-family:'Inter', sans-serif; font-size:16px; line-height:1.55; -webkit-font-smoothing:antialiased; transition:background-color .25s ease, color .25s ease; }
+.site-nav, .card-visual, .book-card, .seat-map, .booking-summary, .booking-form, .booking-confirmation,
+.dash-panel, .calc-box, .history-card, .field input, .field select, .field textarea,
+.seat, .chip, .floor-tab, .slot-pill, .dash-tab, .catalog-row, .loan-row, .role-tab, .auth-card{
+  transition:background-color .25s ease, color .25s ease, border-color .25s ease, box-shadow .25s ease;
+}
+@media (prefers-reduced-motion: reduce){ html{scroll-behavior:auto;} *{animation-duration:0.001ms !important; transition-duration:0.001ms !important;} }
+h1,h2{ font-family:'Bangers', 'Fraunces', serif; font-weight:400; margin:0; color:var(--green-deep); letter-spacing:0.015em; }
+h3,h4{ font-family:'Fraunces', serif; font-weight:600; margin:0; color:var(--green-deep); letter-spacing:-0.01em; }
+p{margin:0;}
+.mono{ font-family:'Space Mono', monospace; }
+a{color:inherit;}
+.wrap{ max-width:var(--maxw); margin:0 auto; padding:0 32px; }
+::selection{ background: var(--brass-light); color:var(--ink); }
+a:focus-visible, button:focus-visible, input:focus-visible, select:focus-visible, textarea:focus-visible{ outline:2px solid var(--stamp); outline-offset:2px; }
+
+.comic-badge{ display:inline-block; font-family:'Bangers', sans-serif; font-size:0.72rem; letter-spacing:0.04em; background:var(--stamp); color:var(--paper); padding:3px 11px; border:2px solid var(--ink); border-radius:8px; box-shadow:2px 2px 0 var(--ink); }
+.comic-badge.role-student{ background:var(--green-mid); }
+.comic-badge.role-librarian{ background:var(--brass); color:var(--ink); }
+
+/* NAV */
+.site-nav{ position:fixed; top:0; left:0; right:0; z-index:100; background:var(--nav-bg); backdrop-filter: blur(6px); border-bottom:2.5px solid var(--ink); }
+.site-nav .wrap{ display:flex; align-items:center; justify-content:space-between; height:66px; }
+.brand{ font-family:'Bangers', sans-serif; font-size:1.5rem; letter-spacing:0.03em; color:var(--green-deep); display:flex; align-items:baseline; gap:8px; text-decoration:none; cursor:pointer; background:none; border:none; padding:0; }
+.brand .dot{ width:9px;height:9px;border-radius:50%; background:var(--stamp); border:1.5px solid var(--ink); display:inline-block; transform:translateY(-3px); }
+.nav-links{ display:flex; gap:26px; list-style:none; margin:0; padding:0; }
+.nav-links a{ text-decoration:none; font-size:0.9rem; color:var(--green-mid); padding:6px 0; border-bottom:1px solid transparent; transition:border-color .15s ease, color .15s ease; white-space:nowrap; }
+.nav-links a:hover, .nav-links a.active{ color:var(--stamp); border-color:var(--stamp); }
+.nav-right{ display:flex; align-items:center; gap:12px; }
+.nav-user{ font-size:0.82rem; color:var(--green-mid); white-space:nowrap; }
+.nav-user strong{ color:var(--green-deep); }
+.logout-link{ font-size:0.82rem; text-decoration:none; color:var(--stamp); border-bottom:1px solid var(--stamp); white-space:nowrap; background:none; cursor:pointer; }
+
+.theme-toggle{ display:inline-flex; align-items:center; justify-content:center; width:38px; height:38px; border:2px solid var(--ink); border-radius:50%; background:var(--card); color:var(--green-deep); cursor:pointer; box-shadow:2px 2px 0 var(--ink); transition:transform .12s ease, box-shadow .12s ease, background .15s ease, color .15s ease; flex-shrink:0; }
+.theme-toggle:hover{ transform:translate(-1px,-1px); box-shadow:3px 3px 0 var(--ink); }
+.theme-toggle:active{ transform:translate(1px,1px); box-shadow:1px 1px 0 var(--ink); }
+.theme-toggle svg{ width:17px; height:17px; }
+.theme-toggle .icon-sun{ display:none; }
+.theme-toggle .icon-moon{ display:block; }
+html[data-theme="dark"] .theme-toggle .icon-sun{ display:block; }
+html[data-theme="dark"] .theme-toggle .icon-moon{ display:none; }
+.nav-toggle{ display:none; }
+
+@media (max-width: 860px){
+  .nav-links{ position:fixed; top:66px; left:0; right:0; background:var(--card); border-bottom:2.5px solid var(--ink); flex-direction:column; gap:0; padding:8px 32px 16px; transform:translateY(-8px); opacity:0; pointer-events:none; transition:opacity .18s ease, transform .18s ease; max-height:70vh; overflow-y:auto; }
+  .nav-links.open{ transform:translateY(0); opacity:1; pointer-events:auto; }
+  .nav-links a{ padding:10px 0; border-bottom:1px solid var(--line); }
+  .nav-toggle{ display:inline-flex; flex-direction:column; gap:4px; background:none; border:none; cursor:pointer; padding:8px; }
+  .nav-toggle span{ width:20px; height:2px; background:var(--green-deep); display:block; }
+  .nav-right{ gap:8px; }
+  .nav-user{ display:none; }
+}
+
+/* HERO */
+.hero{ position:relative; overflow:hidden; padding:150px 0 70px; border-bottom:1px solid var(--line); }
+.hero::after{ content:""; position:absolute; top:-50px; right:-70px; width:340px; height:340px; background-image: radial-gradient(var(--ink) 1.6px, transparent 1.6px); background-size:15px 15px; opacity:0.09; border-radius:50%; pointer-events:none; }
+.hero .wrap{ position:relative; display:grid; grid-template-columns:1.1fr 0.9fr; gap:56px; align-items:center; }
+.hero-code{ font-size:0.8rem; color:var(--brass); letter-spacing:0.04em; margin-bottom:18px; display:block; }
+.hero h1{ font-size:clamp(2.4rem, 4.6vw, 3.8rem); line-height:1.1; max-width:14ch; }
+.hero .lede{ margin-top:20px; font-size:1.06rem; max-width:46ch; color:var(--green-deep); }
+.hero-ctas{ margin-top:30px; display:flex; gap:16px; flex-wrap:wrap; }
+
+.btn{ font-family:'Inter', sans-serif; font-size:0.92rem; font-weight:600; padding:13px 22px; border-radius:var(--radius-sm); border:2.5px solid var(--ink); background:var(--green-deep); color:var(--paper); cursor:pointer; text-decoration:none; display:inline-block; box-shadow:var(--shadow-hard-sm); transition:transform .12s ease, box-shadow .12s ease, background .15s ease; }
+.btn:hover{ background:var(--green-mid); transform:translate(-2px,-2px); box-shadow:var(--shadow-hard); }
+.btn:active{ transform:translate(1px,1px); box-shadow:1px 1px 0 var(--ink); }
+.btn.ghost{ background:var(--paper); color:var(--green-deep); }
+.btn.ghost:hover{ background:var(--card); }
+.btn.danger{ background:var(--stamp); }
+.btn.danger:hover{ background:#c25b45; }
+.btn.small{ padding:8px 14px; font-size:0.8rem; }
+.btn:disabled{ opacity:0.5; cursor:not-allowed; box-shadow:var(--shadow-hard-sm); transform:none; background:var(--green-soft); }
+
+.card-visual{ position:relative; background:var(--card); border:2.5px solid var(--ink); border-radius:var(--radius-card); padding:26px 26px 22px; box-shadow:var(--shadow-hard-lg); transform:rotate(1.3deg); }
+.card-visual .sticker{ position:absolute; top:-16px; right:-14px; transform:rotate(9deg); font-size:0.8rem; padding:5px 13px; }
+.card-row{ display:flex; justify-content:space-between; gap:12px; font-size:0.78rem; padding:7px 0; border-bottom:1px dashed var(--line); }
+.card-row:last-of-type{ border-bottom:none; }
+.card-row .label{ color:var(--green-mid); }
+.card-row .value{ color:var(--ink); font-weight:600; text-align:right; }
+.card-stamp{ margin-top:16px; display:inline-flex; align-items:center; gap:8px; border:2.5px solid var(--stamp); color:var(--stamp); padding:6px 12px; font-size:0.72rem; letter-spacing:0.05em; transform:rotate(-3deg); border-radius:8px; }
+.barcode{ display:flex; gap:2px; margin-top:18px; height:26px; align-items:flex-end; }
+.barcode span{ background:var(--ink); width:2px; }
+
+/* SECTIONS */
+section.feature{ padding:76px 0; border-bottom:1px solid var(--line); }
+.feature-head{ display:flex; gap:20px; align-items:baseline; margin-bottom:14px; flex-wrap:wrap; }
+.feature-code{ font-size:0.85rem; color:var(--brass); white-space:nowrap; }
+.feature h2{ font-size:clamp(1.7rem, 3vw, 2.3rem); }
+.feature-desc{ max-width:64ch; margin-top:14px; color:var(--green-deep); font-size:1rem; }
+.feature-body{ margin-top:36px; }
+
+.chip-row{ display:flex; flex-wrap:wrap; gap:10px; margin-top:20px; }
+.chip{ font-family:'Inter', sans-serif; font-size:0.88rem; padding:9px 16px; background:var(--card); border:2px solid var(--ink); border-radius:20px; color:var(--green-deep); cursor:pointer; box-shadow:2px 2px 0 var(--ink); transition:background .15s ease, color .15s ease, transform .12s ease, box-shadow .12s ease; }
+.chip:hover{ transform:translate(-1px,-1px); box-shadow:3px 3px 0 var(--ink); }
+.chip.active{ background:var(--green-deep); color:var(--paper); }
+
+.book-grid{ margin-top:24px; display:grid; grid-template-columns:repeat(3, 1fr); gap:18px; }
+.book-card{ background:var(--card); border:2.5px solid var(--ink); border-radius:var(--radius-card); padding:18px; box-shadow:var(--shadow-hard); opacity:0; animation:riseIn .32s ease forwards; }
+@keyframes riseIn{ from{ opacity:0; transform:translateY(6px); } to{ opacity:1; transform:translateY(0); } }
+.book-card .genre-tag{ font-size:0.7rem; color:var(--brass); text-transform:uppercase; letter-spacing:0.04em; }
+.book-card h3{ font-size:1.05rem; margin-top:8px; }
+.book-card .author{ font-size:0.85rem; color:var(--green-mid); margin-top:4px; }
+.book-card .why{ font-size:0.82rem; margin-top:12px; color:var(--ink); border-top:1px dashed var(--line); padding-top:10px; }
+.book-card .avail{ font-size:0.74rem; margin-top:8px; font-family:'Space Mono', monospace; }
+.book-card .avail.out{ color:var(--stamp); }
+.book-card .avail.ok{ color:var(--green-mid); }
+
+/* booking */
+.booking-layout{ display:grid; grid-template-columns:1.15fr 0.85fr; gap:40px; margin-top:36px; align-items:start; }
+.seat-map{ background:var(--card); border:2.5px solid var(--ink); border-radius:var(--radius-card); padding:22px; box-shadow:var(--shadow-hard); }
+.window-strip{ text-align:center; font-size:0.68rem; letter-spacing:0.12em; color:var(--brass); padding-bottom:12px; border-bottom:1px dashed var(--line); margin-bottom:16px; }
+.floor-tabs{ display:flex; flex-wrap:wrap; gap:6px; }
+.floor-tab{ font-family:'Inter', sans-serif; font-size:0.78rem; padding:6px 11px; border:2px solid var(--ink); background:var(--paper); color:var(--green-deep); cursor:pointer; border-radius:8px; }
+.floor-tab.active{ background:var(--green-deep); color:var(--paper); }
+.floor-meta{ margin-top:12px; font-size:0.74rem; color:var(--green-mid); }
+.seat-grid{ margin-top:14px; display:grid; grid-template-columns:repeat(10, 1fr); gap:6px; }
+.seat{ aspect-ratio:1; border:2px solid var(--ink); border-radius:6px; background:var(--paper); font-family:'Space Mono', monospace; font-size:0.62rem; display:flex; align-items:center; justify-content:center; cursor:pointer; color:var(--green-mid); }
+.seat[data-state="occupied"]{ background:var(--line-strong); color:var(--ink); cursor:not-allowed; }
+.seat[data-state="selected"]{ background:var(--brass); color:var(--ink); border-color:var(--ink); }
+.seat[data-state="booked"]{ background:var(--stamp); color:var(--paper); cursor:not-allowed; }
+.seat-legend{ margin-top:16px; display:flex; flex-wrap:wrap; gap:14px; font-size:0.72rem; color:var(--green-mid); }
+.seat-legend span{ display:inline-flex; align-items:center; gap:6px; }
+.seat-legend .dot{ width:11px; height:11px; border-radius:3px; border:1.5px solid var(--ink); display:inline-block; background:var(--paper); }
+.seat-legend .dot.occ{ background:var(--line-strong); }
+.seat-legend .dot.sel{ background:var(--brass); }
+.seat-legend .dot.booked{ background:var(--stamp); }
+.slot-row{ display:flex; flex-wrap:wrap; gap:8px; margin-top:14px; }
+.slot-pill{ font-family:'Inter', sans-serif; font-size:0.8rem; padding:8px 13px; border:2px solid var(--ink); background:var(--card); color:var(--green-deep); border-radius:16px; cursor:pointer; }
+.slot-pill.active{ background:var(--green-deep); color:var(--paper); }
+.booking-summary{ margin-top:18px; font-size:0.88rem; color:var(--green-deep); padding:14px; border:1.5px dashed var(--line-strong); border-radius:var(--radius-sm); }
+.booking-form{ margin-top:18px; }
+.form-hint{ font-size:0.78rem; color:var(--green-mid); margin-top:4px; }
+.booking-form h4{ font-size:0.98rem; }
+.booking-form .field{ margin-top:12px; }
+.booking-form .btn{ margin-top:16px; width:100%; }
+.form-note{ font-size:0.76rem; color:var(--green-mid); margin-top:8px; min-height:1em; }
+.form-error{ font-size:0.78rem; color:var(--stamp); margin-top:6px; }
+.booking-confirmation{ margin-top:18px; background:var(--paper-deep); border:2px dashed var(--line-strong); border-radius:var(--radius-sm); padding:16px; }
+.confirm-head{ display:flex; align-items:center; justify-content:space-between; margin-bottom:6px; }
+.booking-confirmation .btn{ margin-top:12px; width:100%; }
+.ai-slot-tip{ position:relative; margin-top:22px; background:var(--card); border:2px solid var(--ink); border-radius:var(--radius-sm); padding:12px 14px; font-size:0.82rem; color:var(--ink); box-shadow:2px 2px 0 var(--ink); }
+.ai-slot-tip::before{ content:""; position:absolute; top:-9px; left:30px; width:0; height:0; border-left:8px solid transparent; border-right:8px solid transparent; border-bottom:10px solid var(--card); }
+.ai-slot-tip .mark{ color:var(--brass); font-family:'Space Mono', monospace; }
+
+/* trending */
+.trend-tabs{ display:flex; gap:6px; margin-top:30px; border-bottom:2px solid var(--line-strong); flex-wrap:wrap; }
+.trend-tab{ font-family:'Inter', sans-serif; font-size:0.88rem; padding:10px 4px; margin-right:22px; background:none; border:none; border-bottom:3px solid transparent; color:var(--green-mid); cursor:pointer; }
+.trend-tab.active{ color:var(--green-deep); border-color:var(--stamp); font-weight:600; }
+.trend-list{ margin-top:6px; list-style:none; padding:0; }
+.trend-list li{ display:grid; grid-template-columns:34px 1fr auto; gap:16px; align-items:baseline; padding:15px 0; border-bottom:1px solid var(--line); }
+.trend-rank{ font-family:'Space Mono', monospace; color:var(--brass); font-size:0.95rem; }
+.trend-title-row{ display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.trend-title{ font-family:'Fraunces', serif; font-size:1.02rem; color:var(--green-deep); }
+.trend-author{ font-size:0.82rem; color:var(--green-mid); margin-top:2px; }
+.trend-metric{ font-family:'Space Mono', monospace; font-size:0.78rem; color:var(--ink); white-space:nowrap; }
+
+/* dashboard / management */
+.dash-tabs{ display:flex; gap:8px; margin-top:30px; flex-wrap:wrap; }
+.dash-tab{ font-family:'Inter', sans-serif; font-size:0.84rem; padding:9px 14px; border:2px solid var(--ink); background:var(--card); color:var(--green-deep); cursor:pointer; border-radius:var(--radius-sm); box-shadow:2px 2px 0 var(--ink); }
+.dash-tab.active{ background:var(--green-deep); color:var(--paper); }
+.dash-panel{ margin-top:20px; background:var(--card); border:2.5px solid var(--ink); border-radius:var(--radius-card); padding:24px; display:none; box-shadow:var(--shadow-hard); }
+.dash-panel.active{ display:block; }
+.form-grid{ display:grid; grid-template-columns:1fr 1fr; gap:14px; }
+.field{ display:flex; flex-direction:column; gap:6px; }
+.field label{ font-size:0.76rem; color:var(--green-mid); }
+.field input, .field select, .field textarea{ font-family:'Inter', sans-serif; font-size:0.88rem; padding:9px 10px; border:2px solid var(--line-strong); border-radius:var(--radius-sm); background:var(--paper); color:var(--ink); }
+.dash-panel .btn{ margin-top:18px; padding:10px 18px; font-size:0.85rem; }
+.dash-panel .form-msg{ margin-top:10px; font-size:0.8rem; }
+.dash-panel .form-msg.ok{ color:var(--green-mid); }
+.dash-panel .form-msg.err{ color:var(--stamp); }
+
+table.data-table{ width:100%; border-collapse:collapse; font-size:0.85rem; }
+table.data-table th{ text-align:left; font-weight:600; color:var(--green-mid); font-size:0.72rem; text-transform:uppercase; letter-spacing:0.03em; padding-bottom:10px; border-bottom:2px solid var(--line-strong); }
+table.data-table td{ padding:11px 8px 11px 0; border-bottom:1px solid var(--line); vertical-align:middle; }
+.badge{ font-family:'Space Mono', monospace; font-size:0.7rem; padding:3px 9px; border-radius:10px; background:rgba(166,64,47,0.14); color:var(--stamp); border:1.5px solid var(--stamp); white-space:nowrap; }
+.badge.ok{ background:rgba(47,80,69,0.14); color:var(--green-mid); border-color:var(--green-mid); }
+.link-btn{ background:none; border:none; padding:0; font-family:'Inter', sans-serif; font-size:0.8rem; color:var(--stamp); text-decoration:underline; cursor:pointer; }
+
+/* fine calculator */
+.tracking-layout{ display:grid; grid-template-columns:0.9fr 1.1fr; gap:40px; margin-top:36px; align-items:start; }
+.calc-box{ background:var(--card); border:2.5px solid var(--ink); border-radius:var(--radius-card); padding:24px; box-shadow:var(--shadow-hard); }
+.calc-formula{ font-family:'Space Mono', monospace; font-size:0.8rem; color:var(--green-mid); margin-bottom:18px; padding-bottom:14px; border-bottom:1px dashed var(--line); }
+.calc-row{ display:flex; justify-content:space-between; align-items:center; gap:12px; margin-bottom:14px; }
+.calc-row label{ font-size:0.86rem; color:var(--green-deep); }
+.calc-row input{ width:90px; font-family:'Space Mono', monospace; font-size:0.9rem; padding:8px 10px; border:2px solid var(--ink); border-radius:var(--radius-sm); background:var(--paper); color:var(--ink); text-align:right; }
+.calc-result{ margin-top:16px; padding-top:16px; border-top:2px solid var(--line-strong); display:flex; justify-content:space-between; align-items:baseline; }
+.calc-result .fine-amount{ font-family:'Bangers', 'Fraunces', serif; font-size:1.9rem; color:var(--fine-color); }
+
+.history-cards{ display:flex; flex-direction:column; gap:12px; }
+.history-card{ display:flex; justify-content:space-between; align-items:center; gap:12px; padding:16px 18px; border:2.5px solid var(--ink); border-radius:var(--radius-card); background:var(--card); box-shadow:var(--shadow-hard-sm); }
+.history-card .title{ font-family:'Fraunces', serif; font-size:1rem; color:var(--green-deep); }
+.history-card .meta{ font-size:0.78rem; color:var(--green-mid); margin-top:4px; }
+.status{ font-family:'Space Mono', monospace; font-size:0.7rem; padding:4px 10px; border-radius:10px; white-space:nowrap; }
+.status.on-time{ background:rgba(47,80,69,0.14); color:var(--green-mid); border:1.5px solid var(--green-mid); }
+.status.overdue{ background:rgba(166,64,47,0.14); color:var(--stamp); border:1.5px solid var(--stamp); }
+.status.due-soon{ background:rgba(180,135,76,0.16); color:var(--brass); border:1.5px solid var(--brass); }
+
+.catalog-manager{ margin-top:20px; display:flex; flex-direction:column; gap:10px; }
+.catalog-row{ display:flex; justify-content:space-between; align-items:center; gap:14px; padding:12px 16px; border:2px solid var(--line-strong); border-radius:var(--radius-sm); background:var(--card); flex-wrap:wrap; }
+.catalog-row .meta{ font-size:0.78rem; color:var(--green-mid); }
+.catalog-row .actions{ display:flex; gap:8px; align-items:center; }
+.empty-state{ font-size:0.86rem; color:var(--green-mid); padding:20px; text-align:center; border:1.5px dashed var(--line-strong); border-radius:var(--radius-sm); }
+
+.stat-row{ display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:14px; margin-top:30px; }
+.stat-card{ background:var(--card); border:2.5px solid var(--ink); border-radius:var(--radius-card); padding:18px; box-shadow:var(--shadow-hard-sm); }
+.stat-card .num{ font-family:'Bangers','Fraunces',serif; font-size:2rem; color:var(--green-deep); }
+.stat-card .label{ font-size:0.78rem; color:var(--green-mid); margin-top:4px; }
+
+footer{ padding:44px 0; }
+footer .wrap{ display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:14px; }
+footer .brand{ font-size:1.3rem; }
+footer .fine-print{ font-size:0.78rem; color:var(--green-mid); }
+
+/* AUTH / LOGIN */
+.auth-shell{ min-height:100vh; display:flex; align-items:center; justify-content:center; padding:110px 20px 60px; position:relative; overflow:hidden; }
+.auth-shell::after{ content:""; position:absolute; top:-60px; right:-90px; width:360px; height:360px; background-image: radial-gradient(var(--ink) 1.6px, transparent 1.6px); background-size:15px 15px; opacity:0.08; border-radius:50%; pointer-events:none; }
+.auth-card{ width:100%; max-width:440px; background:var(--card); border:2.5px solid var(--ink); border-radius:var(--radius-card); padding:32px 30px; box-shadow:var(--shadow-hard-lg); position:relative; }
+.auth-card .comic-badge{ position:absolute; top:-16px; right:22px; transform:rotate(7deg); }
+.auth-title{ font-size:1.9rem; }
+.auth-sub{ font-size:0.9rem; color:var(--green-mid); margin-top:10px; }
+.role-tabs{ display:flex; gap:8px; margin-top:24px; border-bottom:2px solid var(--line-strong); }
+.role-tab{ flex:1; font-family:'Inter', sans-serif; font-size:0.88rem; font-weight:600; padding:12px 8px; background:none; border:none; border-bottom:3px solid transparent; color:var(--green-mid); cursor:pointer; }
+.role-tab.active{ color:var(--green-deep); border-color:var(--stamp); }
+.auth-form{ margin-top:22px; display:none; flex-direction:column; gap:14px; }
+.auth-form.active{ display:flex; }
+.auth-form .btn{ margin-top:6px; width:100%; }
+.auth-hint{ margin-top:16px; font-size:0.76rem; color:var(--green-mid); background:var(--paper-deep); border:1px dashed var(--line-strong); border-radius:var(--radius-sm); padding:10px 12px; }
+.auth-error{ font-size:0.8rem; color:var(--stamp); min-height:1.1em; }
+.auth-footer{ margin-top:22px; text-align:center; font-size:0.8rem; color:var(--green-mid); }
+.sync-note{ margin-top:28px; max-width:440px; font-size:0.76rem; color:var(--green-mid); text-align:center; line-height:1.6; }
+
+[hidden]{ display:none !important; }
+
+@media (max-width: 900px){
+  .hero .wrap{ grid-template-columns:1fr; }
+  .hero{ padding-top:120px; }
+  .booking-layout, .tracking-layout{ grid-template-columns:1fr; }
+  .book-grid{ grid-template-columns:1fr 1fr; }
+  .form-grid{ grid-template-columns:1fr; }
+  .seat-grid{ grid-template-columns:repeat(8, 1fr); }
+}
+@media (max-width: 560px){
+  .wrap{ padding:0 18px; }
+  .book-grid{ grid-template-columns:1fr; }
+  .seat-grid{ grid-template-columns:repeat(5, 1fr); }
+  section.feature{ padding:56px 0; }
+  .auth-card{ padding:26px 20px; }
+  .catalog-row{ flex-direction:column; align-items:flex-start; }
+  .history-card{ flex-direction:column; align-items:flex-start; }
+  table.data-table{ display:block; overflow-x:auto; white-space:nowrap; }
+}
+</style>
+</head>
+<body>
+
+<nav class="site-nav">
+  <div class="wrap">
+    <button class="brand" id="brandLink" type="button"><span class="dot"></span>AI-Brary</button>
+    <ul class="nav-links" id="navLinks"></ul>
+    <div class="nav-right">
+      <span class="nav-user mono" id="navUser"></span>
+      <button class="theme-toggle" id="themeToggle" aria-label="Toggle dark mode">
+        <svg class="icon-moon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
+        <svg class="icon-sun" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/></svg>
+      </button>
+      <button class="logout-link" id="logoutLink" type="button" hidden>Log out</button>
+      <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- ============ LOGIN SCREEN ============ -->
+<main class="auth-shell" id="loginScreen">
+  <div>
+    <div class="auth-card">
+      <span class="comic-badge sticker">SIGN IN</span>
+      <span class="hero-code mono" style="display:block;margin-bottom:10px;">025 — LIBRARY SCIENCE, AI-ASSISTED</span>
+      <h1 class="auth-title">Welcome back to the shelf.</h1>
+      <p class="auth-sub">One library card, two kinds of access. Pick how you're using AI-Brary today.</p>
+
+      <div class="role-tabs" role="tablist">
+        <button class="role-tab active" id="tabStudent" role="tab" aria-selected="true">Student</button>
+        <button class="role-tab" id="tabLibrarian" role="tab" aria-selected="false">Librarian</button>
+      </div>
+
+      <form class="auth-form active" id="studentForm">
+        <div class="field">
+          <label for="stuName">Full name</label>
+          <input type="text" id="stuName" placeholder="e.g. Aditi Rao" required>
+        </div>
+        <div class="field">
+          <label for="stuId">Borrower ID</label>
+          <input type="text" id="stuId" placeholder="e.g. LIB-2291" required>
+        </div>
+        <p class="auth-error" id="studentError"></p>
+        <button type="submit" class="btn">Enter the catalog</button>
+      </form>
+
+      <form class="auth-form" id="librarianForm">
+        <div class="field">
+          <label for="libUser">Staff username</label>
+          <input type="text" id="libUser" placeholder="e.g. librarian" required autocomplete="username">
+        </div>
+        <div class="field">
+          <label for="libPass">Password</label>
+          <input type="password" id="libPass" placeholder="••••••••" required autocomplete="current-password">
+        </div>
+        <p class="auth-error" id="librarianError"></p>
+        <button type="submit" class="btn">Open the desk</button>
+        <p class="auth-hint">Demo staff login — username <strong class="mono">librarian</strong>, password <strong class="mono">library2026</strong>. The desk view only unlocks once these are verified.</p>
+      </form>
+
+      <p class="auth-footer" id="switchHint">New borrower? Any name and borrower ID works for this demo — no separate registration needed.</p>
+    </div>
+    <p class="sync-note">Student bookings, catalog changes, and returns made by the librarian sync live between both views through shared storage — log in as each role (in two tabs, if you like) to see it in action.</p>
+  </div>
+</main>
+
+<!-- ============ STUDENT SCREEN ============ -->
+<div id="studentScreen" hidden>
+<header class="hero" id="top">
+  <div class="wrap">
+    <div>
+      <span class="hero-code mono">025 — LIBRARY SCIENCE, AI-ASSISTED</span>
+      <h1>A library that keeps its own records straight.</h1>
+      <p class="lede">AI-Brary recommends what to read next, holds your seat by the window, and calculates your fine before you've finished apologising for the late return.</p>
+      <div class="hero-ctas">
+        <a href="#recommend" class="btn">Browse the catalog</a>
+        <a href="#booking" class="btn ghost">Reserve a seat</a>
+      </div>
+    </div>
+    <div class="card-visual">
+      <span class="comic-badge sticker role-student">STUDENT</span>
+      <div class="card-row"><span class="label">Borrower</span><span class="value" id="cardName">—</span></div>
+      <div class="card-row"><span class="label">ID</span><span class="value mono" id="cardId">—</span></div>
+      <div class="card-row"><span class="label">Active loans</span><span class="value" id="cardLoans">—</span></div>
+      <div class="card-row"><span class="label">Overdue fine</span><span class="value mono" id="cardFine">—</span></div>
+      <div class="card-stamp mono" id="stampToday">STAMPED —</div>
+      <div class="barcode" id="barcode"></div>
+    </div>
+  </div>
+</header>
+
+<main>
+
+  <section class="feature" id="recommend">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">025.4</span>
+        <h2>Recommendations that read the room</h2>
+      </div>
+      <p class="feature-desc">Every suggestion is built from what you've actually borrowed, searched for, and rated — plus what readers with similar taste are picking up right now. The catalog below is the librarian's live shelf, not a static list.</p>
+      <div class="feature-body">
+        <div class="chip-row" id="genreChips"></div>
+        <div class="book-grid" id="bookResults"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="ebook">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">028.9</span>
+        <h2>Read the first chapter before you commit</h2>
+      </div>
+      <p class="feature-desc">Preview a few pages, skim the AI-generated summary, or check the key topics — all before a single copy leaves the shelf. Tap a cover to flip it.</p>
+      <div class="feature-body flip-grid" id="flipGrid" style="display:grid;grid-template-columns:repeat(3,1fr);gap:22px;"></div>
+    </div>
+  </section>
+
+  <section class="feature" id="booking">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">069</span>
+        <h2>Every seat, booked without the line</h2>
+      </div>
+      <p class="feature-desc">290 seats across six floors, all in real time. Pick a floor, hold a seat for your study block — the librarian sees your reservation the moment you confirm it.</p>
+      <div class="feature-body booking-layout">
+        <div class="seat-map">
+          <div class="window-strip mono">— WINDOW SIDE —</div>
+          <div class="floor-tabs" id="floorTabs"></div>
+          <div class="floor-meta mono" id="floorMeta"></div>
+          <div class="seat-grid" id="seatGrid"></div>
+          <div class="seat-legend">
+            <span><span class="dot"></span>Available</span>
+            <span><span class="dot occ"></span>Occupied</span>
+            <span><span class="dot sel"></span>Your pick</span>
+            <span><span class="dot booked"></span>Booked</span>
+          </div>
+        </div>
+        <div class="booking-panel">
+          <h3 style="font-size:1.05rem;">Study window</h3>
+          <div class="slot-row" id="slotRow"></div>
+          <div class="booking-summary" id="bookingSummary">Pick a seat and a time to see your reservation here.</div>
+
+          <div class="booking-form" id="bookingForm" hidden>
+            <h4>Who's this seat for?</h4>
+            <p class="form-hint">A few details to hold the reservation under your name.</p>
+            <div class="field"><label for="bookerName">Full name *</label><input type="text" id="bookerName" placeholder="e.g. Aditi Rao"></div>
+            <div class="field"><label for="bookerId">Borrower ID *</label><input type="text" id="bookerId" placeholder="e.g. LIB-2291"></div>
+            <div class="field"><label for="bookerEmail">Email *</label><input type="email" id="bookerEmail" placeholder="you@example.com"></div>
+            <div class="field"><label for="bookerPhone">Phone (optional)</label><input type="tel" id="bookerPhone" placeholder="+91 98765 43210"></div>
+            <button class="btn" id="confirmBookingBtn">Confirm reservation</button>
+            <p class="form-note" id="bookingFormNote"></p>
+            <p class="form-error mono" id="bookingFormError" hidden></p>
+          </div>
+
+          <div class="booking-confirmation" id="bookingConfirmation" hidden>
+            <div class="confirm-head">
+              <h4>Reservation confirmed</h4>
+              <span class="comic-badge">HELD!</span>
+            </div>
+            <div class="card-row"><span class="label">Reserved for</span><span class="value" id="confName">—</span></div>
+            <div class="card-row"><span class="label">Seat</span><span class="value" id="confSeat">—</span></div>
+            <div class="card-row"><span class="label">Window</span><span class="value" id="confSlot">—</span></div>
+            <div class="card-row"><span class="label">Borrower ID</span><span class="value" id="confId">—</span></div>
+            <div class="card-row"><span class="label">Reference</span><span class="value mono" id="confRef">—</span></div>
+            <button class="btn ghost" id="newBookingBtn">Book another seat</button>
+          </div>
+
+          <div class="ai-slot-tip">
+            <span class="mark">AI —</span>
+            <span>Your best slot today is <strong>3:00–5:00 PM</strong>, the free period before your 5:30 lab. Reservations sync to the librarian's desk instantly.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="trending">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">070</span>
+        <h2>What the shelves are talking about</h2>
+      </div>
+      <p class="feature-desc">Ranked from the librarian's live catalog — updated the moment a book is added or a copy goes out.</p>
+      <div class="feature-body">
+        <div class="trend-tabs" id="trendTabs"></div>
+        <ul class="trend-list" id="trendList"></ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="loans" style="border-bottom:none;">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">025.84</span>
+        <h2>Your loans, and what they'll cost you late</h2>
+      </div>
+      <p class="feature-desc">Loans issued to your borrower ID by the librarian, tracked automatically. Once a book is late, the fine is just arithmetic.</p>
+      <div class="feature-body tracking-layout">
+        <div class="calc-box">
+          <div class="calc-formula">FINE&nbsp;=&nbsp;LATE&nbsp;DAYS&nbsp;×&nbsp;RATE&nbsp;PER&nbsp;DAY</div>
+          <div class="calc-row">
+            <label for="lateDays">Days late</label>
+            <input type="number" id="lateDays" value="6" min="0">
+          </div>
+          <div class="calc-row">
+            <label for="ratePerDay">Rate per day (₹)</label>
+            <input type="number" id="ratePerDay" value="5" min="0">
+          </div>
+          <div class="calc-result">
+            <span style="font-size:0.82rem; color:var(--green-mid);">Fine due</span>
+            <span class="fine-amount mono" id="fineAmount">₹30</span>
+          </div>
+        </div>
+        <div class="history-cards" id="historyCards"></div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- ============ LIBRARIAN SCREEN ============ -->
+<div id="librarianScreen" hidden>
+<header class="hero" id="libTop" style="padding-bottom:40px;">
+  <div class="wrap">
+    <div>
+      <span class="hero-code mono">020 — DESK OPERATIONS</span>
+      <h1>One dashboard for the whole shelf.</h1>
+      <p class="lede">Add and retire titles, issue and return copies, manage seats, and see exactly what's overdue — every change here is live on the student site.</p>
+    </div>
+    <div class="card-visual">
+      <span class="comic-badge sticker role-librarian">STAFF</span>
+      <div class="card-row"><span class="label">Signed in as</span><span class="value" id="libCardName">—</span></div>
+      <div class="card-row"><span class="label">Shift stamped</span><span class="value mono" id="libStampToday">—</span></div>
+      <div class="barcode" id="libBarcode"></div>
+    </div>
+  </div>
+  <div class="wrap">
+    <div class="stat-row" id="statRow"></div>
+  </div>
+</header>
+
+<main>
+
+  <section class="feature" id="catalog">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">025.4</span>
+        <h2>Manage the catalog</h2>
+      </div>
+      <p class="feature-desc">Titles added here appear immediately in student recommendations and trending.</p>
+      <div class="feature-body">
+        <div class="dash-panel active" style="padding:22px;">
+          <form id="addBookForm">
+            <div class="form-grid">
+              <div class="field"><label for="bkTitle">Title</label><input type="text" id="bkTitle" placeholder="e.g. The Late Return" required></div>
+              <div class="field"><label for="bkAuthor">Author</label><input type="text" id="bkAuthor" placeholder="e.g. A. Rao" required></div>
+              <div class="field"><label for="bkGenre">Genre</label>
+                <select id="bkGenre">
+                  <option>Fiction</option><option>Science Fiction</option><option>Mystery</option>
+                  <option>Biography</option><option>History</option><option>Poetry</option>
+                  <option>Computer Science</option><option>Fantasy</option>
+                </select>
+              </div>
+              <div class="field"><label for="bkCopies">Copies</label><input type="number" id="bkCopies" value="3" min="1" required></div>
+              <div class="field" style="grid-column:1/-1;"><label for="bkWhy">Why we'd recommend it (optional)</label><input type="text" id="bkWhy" placeholder="e.g. Trending among first-years this term"></div>
+            </div>
+            <button class="btn" type="submit">Add to catalog</button>
+            <p class="form-msg" id="addBookMsg"></p>
+          </form>
+        </div>
+        <div class="catalog-manager" id="catalogList"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="seats">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">069</span>
+        <h2>Seat map, live</h2>
+      </div>
+      <p class="feature-desc">Reservations made by students appear here the moment they're confirmed. Click a booked or occupied seat to release it; click a free seat to mark it occupied without a reservation (walk-ins, reading room use, etc.).</p>
+      <div class="feature-body booking-layout">
+        <div class="seat-map">
+          <div class="window-strip mono">— WINDOW SIDE —</div>
+          <div class="floor-tabs" id="libFloorTabs"></div>
+          <div class="floor-meta mono" id="libFloorMeta"></div>
+          <div class="seat-grid" id="libSeatGrid"></div>
+          <div class="seat-legend">
+            <span><span class="dot"></span>Available</span>
+            <span><span class="dot occ"></span>Occupied</span>
+            <span><span class="dot booked"></span>Booked by student</span>
+          </div>
+        </div>
+        <div class="booking-panel">
+          <h3 style="font-size:1.05rem;">Selected seat</h3>
+          <div class="booking-summary" id="seatDetail">Click any seat to see or release its reservation.</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="issue">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">025.7</span>
+        <h2>Issue a book</h2>
+      </div>
+      <p class="feature-desc">Issuing a copy reduces its availability on the student site and starts the loan clock.</p>
+      <div class="feature-body">
+        <div class="dash-panel active" style="padding:22px;">
+          <form id="issueForm">
+            <div class="form-grid">
+              <div class="field"><label for="issueBook">Book</label><select id="issueBook"></select></div>
+              <div class="field"><label for="issueName">Borrower name</label><input type="text" id="issueName" placeholder="e.g. Aditi Rao" required></div>
+              <div class="field"><label for="issueId">Borrower ID</label><input type="text" id="issueId" placeholder="e.g. LIB-2291" required></div>
+              <div class="field"><label for="issuePeriod">Loan period</label>
+                <select id="issuePeriod"><option value="14">14 days</option><option value="21">21 days</option><option value="30">30 days</option></select>
+              </div>
+            </div>
+            <button class="btn" type="submit">Issue book</button>
+            <p class="form-msg" id="issueMsg"></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="feature" id="returns" style="border-bottom:none;">
+    <div class="wrap">
+      <div class="feature-head">
+        <span class="feature-code mono">025.84</span>
+        <h2>Active loans, returns &amp; fines</h2>
+      </div>
+      <p class="feature-desc">Mark a copy returned to restore it to the catalog and close out the loan.</p>
+      <div class="feature-body tracking-layout">
+        <div class="calc-box">
+          <div class="calc-formula">FINE&nbsp;=&nbsp;LATE&nbsp;DAYS&nbsp;×&nbsp;RATE&nbsp;PER&nbsp;DAY</div>
+          <div class="calc-row"><label for="libLateDays">Days late</label><input type="number" id="libLateDays" value="6" min="0"></div>
+          <div class="calc-row"><label for="libRatePerDay">Rate per day (₹)</label><input type="number" id="libRatePerDay" value="5" min="0"></div>
+          <div class="calc-result"><span style="font-size:0.82rem;color:var(--green-mid);">Fine due</span><span class="fine-amount mono" id="libFineAmount">₹30</span></div>
+        </div>
+        <div>
+          <table class="data-table">
+            <thead><tr><th>Title</th><th>Borrower</th><th>Due</th><th>Status</th><th></th></tr></thead>
+            <tbody id="loansTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<footer>
+  <div class="wrap">
+    <span class="brand"><span class="dot"></span>AI-Brary</span>
+    <span class="fine-print" id="footerNote">An AI-assisted library management concept — recommendations, seats, and shelves, kept in order.</span>
+  </div>
+</footer>
+
+<!-- Supabase client library -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+  const SUPABASE_URL = 'https://cavbhnjomunnqxncdiyy.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_gVeMaNNourqtlyVSPlJkgA_LZlCh9iJ';
+  const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+</script>
+
+<script>
+/* ================= DATA LAYER (from data.js) =================
+   Backed by Supabase (Postgres) instead of window.storage, so the
+   Student view and the Librarian view read and write the same
+   real database tables: books, seats, loans.
+   Run the accompanying supabase_schema.sql once in your Supabase
+   project's SQL editor before using this. */
+const AIB = (function(){
+
+  const SEED_CATALOG = [
+    { id:'bk-001', title:'Small Gods of Rain', author:'R. Shah', genre:'Fiction', copies:4, available:3, why:'Readers who borrowed this also liked The Late Return.' },
+    { id:'bk-002', title:'The Quiet Ledger', author:'M. Fernandes', genre:'Fiction', copies:5, available:0, why:'Highly rated by readers with similar taste.' },
+    { id:'bk-003', title:'Salt & Circuit', author:'N. Iyer', genre:'Science Fiction', copies:3, available:1, why:'Trending among students in your programme.' },
+    { id:'bk-004', title:'The Last Archive', author:'K. Mwangi', genre:'Science Fiction', copies:2, available:2, why:'Similar to titles rated 5 stars this term.' },
+    { id:'bk-005', title:"The Cartographer's Alibi", author:'E. Laurent', genre:'Mystery', copies:3, available:2, why:'Rising fast among readers near you.' },
+    { id:'bk-006', title:'Nine Doors to Malabar', author:'T. Krishnan', genre:'Mystery', copies:2, available:0, why:'Matches a 4-star average in this genre.' },
+    { id:'bk-007', title:'Ink and Iron', author:'H. Roy', genre:'Biography', copies:3, available:3, why:'Popular with readers who liked recent picks.' },
+    { id:'bk-008', title:'The Monsoon Ledgers', author:'A. Bhattacharya', genre:'History', copies:2, available:1, why:'Based on recent search trends.' },
+    { id:'bk-009', title:'Marginalia', author:'S. Ibarra', genre:'Poetry', copies:2, available:2, why:'Rated highly by poetry readers this year.' },
+    { id:'bk-010', title:'Notes on a Recursive Mind', author:'D. Okonkwo', genre:'Computer Science', copies:4, available:2, why:'Borrowed often by students in CS programmes.' },
+    { id:'bk-011', title:'The Cartographer of Nowhere', author:'I. Solberg', genre:'Fantasy', copies:3, available:3, why:'Trending among fantasy readers this week.' }
+  ];
+
+  const FLOORS = [
+    { id:1, rows:5, cols:10 }, { id:2, rows:5, cols:10 }, { id:3, rows:5, cols:10 },
+    { id:4, rows:5, cols:10 }, { id:5, rows:5, cols:10 }, { id:6, rows:4, cols:10 }
+  ];
+  function buildSeats(){
+    const OCCUPIED_PATTERN = new Set([2,5,9,14,18,23,27,32,36,41,45,48]);
+    const seats = {};
+    FLOORS.forEach(f => {
+      for(let r=0; r<f.rows; r++){
+        for(let c=0; c<f.cols; c++){
+          const label = String.fromCharCode(65 + r) + (c + 1);
+          const seatId = 'f' + f.id + '-' + label;
+          const idx = r * f.cols + c;
+          seats[seatId] = { floor:f.id, state: OCCUPIED_PATTERN.has(idx) ? 'occupied' : 'free' };
+        }
+      }
+    });
+    return seats;
+  }
+
+  const SEED_LOANS = [
+    { ref:'AIB-SEED1', title:'The Late Return', borrowerName:'A. Rao', borrowerId:'LIB-2201', issueDate:'2026-08-12', dueDate:'2026-08-26', returned:true, returnDate:'2026-08-25' },
+    { ref:'AIB-SEED2', title:'Salt & Circuit', borrowerName:'N. Iyer', borrowerId:'LIB-2288', issueDate:'2026-08-18', dueDate:'2026-09-01', returned:false },
+    { ref:'AIB-SEED3', title:'The Quiet Ledger', borrowerName:'M. Fernandes', borrowerId:'LIB-2144', issueDate:'2026-08-08', dueDate:'2026-08-22', returned:false }
+  ];
+
+  /* ---------- BOOKS / CATALOG ---------- */
+  async function getCatalog(){
+    const { data, error } = await sb.from('books').select('*').order('title');
+    if(error){ console.error('getCatalog error:', error.message); return SEED_CATALOG; }
+    if(!data || data.length === 0){
+      const { error: seedErr } = await sb.from('books').insert(SEED_CATALOG);
+      if(seedErr) console.error('seed books error:', seedErr.message);
+      return SEED_CATALOG;
+    }
+    return data;
+  }
+  async function setCatalog(v){
+    const { error } = await sb.from('books').upsert(v, { onConflict: 'id' });
+    if(error){ console.error('setCatalog error:', error.message); return false; }
+    return true;
+  }
+
+  /* ---------- SEATS ---------- */
+  async function getSeats(){
+    const { data, error } = await sb.from('seats').select('*');
+    if(error){ console.error('getSeats error:', error.message); return buildSeats(); }
+    if(!data || data.length === 0){
+      const seeded = buildSeats();
+      const rows = Object.entries(seeded).map(([seat_id, s]) => ({ seat_id, floor: s.floor, state: s.state }));
+      const { error: seedErr } = await sb.from('seats').insert(rows);
+      if(seedErr) console.error('seed seats error:', seedErr.message);
+      return seeded;
+    }
+    const seats = {};
+    data.forEach(row => {
+      seats[row.seat_id] = { floor: row.floor, state: row.state };
+      if(row.booked_by_name) seats[row.seat_id].bookedBy = { name: row.booked_by_name, id: row.booked_by_id };
+      if(row.slot) seats[row.seat_id].slot = row.slot;
+      if(row.ref) seats[row.seat_id].ref = row.ref;
+    });
+    return seats;
+  }
+  async function setSeats(v){
+    const rows = Object.entries(v).map(([seat_id, s]) => ({
+      seat_id, floor: s.floor, state: s.state,
+      booked_by_name: s.bookedBy ? s.bookedBy.name : null,
+      booked_by_id: s.bookedBy ? s.bookedBy.id : null,
+      slot: s.slot || null,
+      ref: s.ref || null
+    }));
+    const { error } = await sb.from('seats').upsert(rows, { onConflict: 'seat_id' });
+    if(error){ console.error('setSeats error:', error.message); return false; }
+    return true;
+  }
+
+  /* ---------- LOANS ---------- */
+  async function getLoans(){
+    const { data, error } = await sb.from('loans').select('*').order('due_date');
+    if(error){ console.error('getLoans error:', error.message); return SEED_LOANS; }
+    if(!data || data.length === 0){
+      const rows = SEED_LOANS.map(l => ({
+        ref: l.ref, title: l.title, borrower_name: l.borrowerName, borrower_id: l.borrowerId,
+        issue_date: l.issueDate, due_date: l.dueDate, returned: l.returned, return_date: l.returnDate || null
+      }));
+      const { error: seedErr } = await sb.from('loans').insert(rows);
+      if(seedErr) console.error('seed loans error:', seedErr.message);
+      return SEED_LOANS;
+    }
+    return data.map(row => ({
+      ref: row.ref, title: row.title, borrowerName: row.borrower_name, borrowerId: row.borrower_id,
+      issueDate: row.issue_date, dueDate: row.due_date, returned: row.returned, returnDate: row.return_date
+    }));
+  }
+  async function setLoans(v){
+    const rows = v.map(l => ({
+      ref: l.ref, title: l.title, borrower_name: l.borrowerName, borrower_id: l.borrowerId,
+      issue_date: l.issueDate, due_date: l.dueDate, returned: l.returned, return_date: l.returnDate || null
+    }));
+    const { error } = await sb.from('loans').upsert(rows, { onConflict: 'ref' });
+    if(error){ console.error('setLoans error:', error.message); return false; }
+    return true;
+  }
+
+  function genRef(){ return 'AIB-' + Math.random().toString(36).slice(2, 7).toUpperCase(); }
+  function genId(prefix){ return prefix + '-' + Math.random().toString(36).slice(2, 7).toUpperCase(); }
+
+  return { getCatalog, setCatalog, getSeats, setSeats, getLoans, setLoans, FLOORS, genRef, genId };
+})();
+</script>
+
+<script>
+(function(){
+  /* ================= GLOBAL: THEME + NAV TOGGLE (shared across all screens) ================= */
+  const root = document.documentElement;
+  const themeToggle = document.getElementById('themeToggle');
+  const prefersDark = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
+  root.setAttribute('data-theme', prefersDark ? 'dark' : 'light');
+  themeToggle.addEventListener('click', () => {
+    const isDark = root.getAttribute('data-theme') === 'dark';
+    root.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  });
+
+  const navToggle = document.getElementById('navToggle');
+  const navLinksEl = document.getElementById('navLinks');
+  navToggle.addEventListener('click', () => {
+    const open = navLinksEl.classList.toggle('open');
+    navToggle.setAttribute('aria-expanded', open);
+  });
+
+  document.getElementById('brandLink').addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+
+  /* ================= SCREEN SWITCHING ================= */
+  const screens = {
+    login: document.getElementById('loginScreen'),
+    student: document.getElementById('studentScreen'),
+    librarian: document.getElementById('librarianScreen')
+  };
+  const navUserEl = document.getElementById('navUser');
+  const logoutLink = document.getElementById('logoutLink');
+
+  const STUDENT_LINKS = [
+    { href:'#recommend', label:'Recommend' },
+    { href:'#ebook', label:'E-Book' },
+    { href:'#booking', label:'Seats' },
+    { href:'#trending', label:'Trending' },
+    { href:'#loans', label:'My loans' }
+  ];
+  const LIBRARIAN_LINKS = [
+    { href:'#libTop', label:'Overview' },
+    { href:'#catalog', label:'Catalog' },
+    { href:'#seats', label:'Seats' },
+    { href:'#issue', label:'Issue a book' },
+    { href:'#returns', label:'Returns & fines' }
+  ];
+
+  function renderNavLinks(links){
+    navLinksEl.innerHTML = links.map(l => `<li><a href="${l.href}">${l.label}</a></li>`).join('');
+    navLinksEl.querySelectorAll('a').forEach(a => a.addEventListener('click', () => navLinksEl.classList.remove('open')));
+  }
+
+  function showScreen(name){
+    Object.keys(screens).forEach(k => { screens[k].hidden = (k !== name); });
+    navLinksEl.classList.remove('open');
+    if(name === 'login'){
+      navUserEl.textContent = '';
+      navLinksEl.innerHTML = '';
+      logoutLink.hidden = true;
+    } else {
+      logoutLink.hidden = false;
+      renderNavLinks(name === 'student' ? STUDENT_LINKS : LIBRARIAN_LINKS);
+    }
+    window.scrollTo({ top: 0, behavior: 'auto' });
+  }
+
+  logoutLink.addEventListener('click', () => {
+    showScreen('login');
+    document.getElementById('studentError').textContent = '';
+    document.getElementById('librarianError').textContent = '';
+    document.getElementById('librarianForm').reset();
+  });
+
+  /* ================= LOGIN SCREEN LOGIC ================= */
+  const tabStudent = document.getElementById('tabStudent');
+  const tabLibrarian = document.getElementById('tabLibrarian');
+  const studentForm = document.getElementById('studentForm');
+  const librarianForm = document.getElementById('librarianForm');
+  const switchHint = document.getElementById('switchHint');
+
+  function showStudentTab(){
+    tabStudent.classList.add('active'); tabLibrarian.classList.remove('active');
+    tabStudent.setAttribute('aria-selected','true'); tabLibrarian.setAttribute('aria-selected','false');
+    studentForm.classList.add('active'); librarianForm.classList.remove('active');
+    switchHint.textContent = 'New borrower? Any name and borrower ID works for this demo — no separate registration needed.';
+  }
+  function showLibrarianTab(){
+    tabLibrarian.classList.add('active'); tabStudent.classList.remove('active');
+    tabLibrarian.setAttribute('aria-selected','true'); tabStudent.setAttribute('aria-selected','false');
+    librarianForm.classList.add('active'); studentForm.classList.remove('active');
+    switchHint.textContent = 'Librarian access is limited to library staff with an issued desk account — username and password are required below.';
+  }
+  tabStudent.addEventListener('click', showStudentTab);
+  tabLibrarian.addEventListener('click', showLibrarianTab);
+
+  studentForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('stuName').value.trim();
+    const id = document.getElementById('stuId').value.trim();
+    const err = document.getElementById('studentError');
+    if(!name || !id){ err.textContent = 'Enter your name and borrower ID to continue.'; return; }
+    err.textContent = '';
+    Student.enter(name, id);
+    showScreen('student');
+  });
+
+  // Librarian credentials required to reach the desk view — this is the access gate.
+  const LIBRARIAN_USERNAME = 'librarian';
+  const LIBRARIAN_PASSWORD = 'library2026';
+  librarianForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const user = document.getElementById('libUser').value.trim();
+    const pass = document.getElementById('libPass').value;
+    const err = document.getElementById('librarianError');
+    if(user.toLowerCase() === LIBRARIAN_USERNAME && pass === LIBRARIAN_PASSWORD){
+      err.textContent = '';
+      Librarian.enter(user);
+      showScreen('librarian');
+      librarianForm.reset();
+    } else {
+      err.textContent = 'Incorrect username or password. Librarian access requires the staff credentials above.';
+    }
+  });
+
+  /* ================= STUDENT APP ================= */
+  const Student = (function(){
+    let session = { name:'Guest reader', id:'LIB-0000' };
+    let started = false;
+
+    function boot(){
+      /* ---------- HERO DATE STAMP ---------- */
+      const fmt = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+      document.getElementById('stampToday').textContent = 'STAMPED ' + fmt(new Date());
+      const barcode = document.getElementById('barcode');
+      for(let i=0;i<38;i++){ const bar = document.createElement('span'); bar.style.height = (Math.random()*14 + 10) + 'px'; barcode.appendChild(bar); }
+
+      /* ---------- E-BOOK FLIP CARDS ---------- */
+      const ebooks = [
+        { title:'The Late Return', code:'L1', summary:"A quiet argument for slower reading, told through one librarian's notes over a decade at a small branch library.", topics:['Attention','Method','Essay'] },
+        { title:'Salt & Circuit', code:'S2', summary:'A shipboard AI and its engineer negotiate what counts as a promise, three years into a supply run with no captain left to referee.', topics:['AI Ethics','Sci-Fi','Dialogue'] },
+        { title:'The Monsoon Ledgers', code:'M3', summary:'Trade records from three port cities, read as a history of ordinary weather rather than empire.', topics:['History','Trade','Climate'] }
+      ];
+      const flipGrid = document.getElementById('flipGrid');
+      ebooks.forEach(b => {
+        const outer = document.createElement('div');
+        outer.style.cssText = 'perspective:1200px;height:320px;';
+        outer.innerHTML = `
+          <div class="flip-inner" style="position:relative;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.4,.2,.2,1);cursor:pointer;">
+            <div class="flip-face flip-front" style="position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;border:2.5px solid var(--ink);padding:20px;display:flex;flex-direction:column;box-shadow:var(--shadow-hard);background:var(--green-deep);color:var(--paper);justify-content:space-between;">
+              <div class="mono" style="width:36px;height:36px;border:2px solid rgba(239,230,212,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.7rem;">${b.code}</div>
+              <div><h3 style="color:var(--paper);font-size:1.15rem;">${b.title}</h3><div style="font-size:0.74rem;color:var(--brass-light);margin-top:6px;">Tap for AI summary</div></div>
+            </div>
+            <div class="flip-face flip-back" style="position:absolute;inset:0;backface-visibility:hidden;border-radius:16px;border:2.5px solid var(--ink);padding:20px;display:flex;flex-direction:column;box-shadow:var(--shadow-hard);background:var(--card);transform:rotateY(180deg);">
+              <div class="mono" style="font-size:0.7rem;color:var(--brass);text-transform:uppercase;letter-spacing:0.04em;">AI Summary</div>
+              <p style="font-size:0.82rem;margin-top:10px;color:var(--ink);line-height:1.5;">${b.summary}</p>
+              <div style="margin-top:auto;display:flex;flex-wrap:wrap;gap:6px;">${b.topics.map(t => `<span style="font-size:0.7rem;border:1.5px solid var(--line-strong);padding:3px 9px;border-radius:12px;color:var(--green-mid);">${t}</span>`).join('')}</div>
+            </div>
+          </div>`;
+        outer.addEventListener('click', () => {
+          const inner = outer.querySelector('.flip-inner');
+          const flipped = inner.style.transform === 'rotateY(180deg)';
+          inner.style.transform = flipped ? '' : 'rotateY(180deg)';
+        });
+        flipGrid.appendChild(outer);
+      });
+      const flipStyle = document.createElement('style');
+      flipStyle.textContent = '@media(max-width:900px){#flipGrid{grid-template-columns:1fr 1fr !important;}} @media(max-width:560px){#flipGrid{grid-template-columns:1fr !important;}}';
+      document.head.appendChild(flipStyle);
+
+      /* ---------- LIVE CATALOG (recommendations + trending) ---------- */
+      const chipRow = document.getElementById('genreChips');
+      const bookResults = document.getElementById('bookResults');
+      const trendTabs = document.getElementById('trendTabs');
+      const trendList = document.getElementById('trendList');
+      let catalog = [];
+      let activeGenre = null;
+
+      function renderChips(){
+        const genres = [...new Set(catalog.map(b => b.genre))];
+        chipRow.innerHTML = '';
+        if(!activeGenre || !genres.includes(activeGenre)) activeGenre = genres[0];
+        genres.forEach(g => {
+          const chip = document.createElement('button');
+          chip.className = 'chip' + (g === activeGenre ? ' active' : '');
+          chip.textContent = g;
+          chip.addEventListener('click', () => { activeGenre = g; renderChips(); renderBooks(); });
+          chipRow.appendChild(chip);
+        });
+      }
+      function renderBooks(){
+        bookResults.innerHTML = '';
+        if(catalog.length === 0){
+          bookResults.innerHTML = '<p class="empty-state">The librarian hasn&#39;t added any titles yet.</p>';
+          return;
+        }
+        catalog.filter(b => b.genre === activeGenre).forEach((b, i) => {
+          const card = document.createElement('div');
+          card.className = 'book-card';
+          card.style.animationDelay = (i * 0.06) + 's';
+          const availClass = b.available === 0 ? 'out' : 'ok';
+          const availText = b.available === 0 ? 'All copies out' : b.available + ' of ' + b.copies + ' available';
+          card.innerHTML = `
+            <span class="genre-tag mono">${b.genre}</span>
+            <h3>${b.title}</h3>
+            <div class="author">${b.author}</div>
+            <div class="why">${b.why || 'A new addition to the catalog.'}</div>
+            <div class="avail mono ${availClass}">${availText}</div>`;
+          bookResults.appendChild(card);
+        });
+      }
+      function renderTrend(){
+        const byBorrowed = [...catalog].sort((a,b) => (b.copies-b.available) - (a.copies-a.available)).slice(0,5);
+        const byNew = [...catalog].sort((a,b) => (b.addedAt||0) - (a.addedAt||0)).slice(0,5);
+        const cats = { 'Most borrowed': byBorrowed, 'New in catalog': byNew };
+        trendTabs.innerHTML = '';
+        Object.keys(cats).forEach((cat, i) => {
+          const tab = document.createElement('button');
+          tab.className = 'trend-tab' + (i === 0 ? ' active' : '');
+          tab.textContent = cat;
+          tab.addEventListener('click', () => {
+            trendTabs.querySelectorAll('.trend-tab').forEach(t => t.classList.remove('active'));
+            tab.classList.add('active');
+            fillTrendList(cats[cat]);
+          });
+          trendTabs.appendChild(tab);
+        });
+        fillTrendList(byBorrowed);
+        function fillTrendList(list){
+          trendList.innerHTML = '';
+          if(list.length === 0){ trendList.innerHTML = '<li class="empty-state" style="grid-column:1/-1;">Nothing to rank yet.</li>'; return; }
+          list.forEach((b, i) => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+              <span class="trend-rank mono">${String(i+1).padStart(2,'0')}</span>
+              <span>
+                <div class="trend-title-row">
+                  <span class="trend-title">${b.title}</span>
+                  ${i === 0 ? '<span class="comic-badge">TOP PICK</span>' : ''}
+                </div>
+                <div class="trend-author">${b.author}</div>
+              </span>
+              <span class="trend-metric">${(b.copies-b.available)} on loan</span>`;
+            trendList.appendChild(li);
+          });
+        }
+      }
+      async function loadCatalog(){
+        catalog = await AIB.getCatalog();
+        renderChips();
+        renderBooks();
+        renderTrend();
+      }
+
+      /* ---------- SEAT BOOKING ---------- */
+      const FLOORS = AIB.FLOORS;
+      let seats = {};
+      let selectedSeatId = null;
+      let currentFloor = FLOORS[0].id;
+      let selectedSlot = null;
+      const seatGrid = document.getElementById('seatGrid');
+      const floorTabsEl = document.getElementById('floorTabs');
+      const floorMetaEl = document.getElementById('floorMeta');
+
+      function seatsForFloor(floorId){ return Object.keys(seats).filter(id => seats[id].floor === floorId).sort(); }
+      function seatLabel(seatId){ return seatId.split('-')[1]; }
+
+      function renderFloorTabs(){
+        floorTabsEl.innerHTML = '';
+        FLOORS.forEach((f) => {
+          const tab = document.createElement('button');
+          tab.className = 'floor-tab' + (f.id === currentFloor ? ' active' : '');
+          tab.dataset.floor = f.id;
+          tab.textContent = 'Floor ' + f.id + ' · ' + (f.rows * f.cols);
+          tab.addEventListener('click', () => { currentFloor = f.id; renderFloor(); });
+          floorTabsEl.appendChild(tab);
+        });
+      }
+      function renderFloor(){
+        seatGrid.innerHTML = '';
+        seatsForFloor(currentFloor).forEach(seatId => {
+          const seat = document.createElement('button');
+          const label = seatLabel(seatId);
+          seat.className = 'seat';
+          seat.dataset.id = seatId;
+          seat.dataset.state = seatId === selectedSeatId ? 'selected' : seats[seatId].state;
+          seat.textContent = label;
+          seat.setAttribute('aria-label', 'Floor ' + currentFloor + ', seat ' + label);
+          seat.addEventListener('click', () => onSeatClick(seatId));
+          seatGrid.appendChild(seat);
+        });
+        floorTabsEl.querySelectorAll('.floor-tab').forEach(t => t.classList.toggle('active', Number(t.dataset.floor) === currentFloor));
+        const ids = seatsForFloor(currentFloor);
+        const free = ids.filter(id => seats[id].state === 'free').length;
+        floorMetaEl.textContent = 'Floor ' + currentFloor + ' · ' + ids.length + ' seats · ' + free + ' free';
+      }
+      function onSeatClick(seatId){
+        if(seats[seatId].state === 'occupied' || seats[seatId].state === 'booked') return;
+        selectedSeatId = (selectedSeatId === seatId) ? null : seatId;
+        bookingConfirmation.hidden = true;
+        renderFloor();
+        updateBookingSummary();
+      }
+
+      const slots = ['9:00–11:00 AM','11:00–1:00 PM','2:00–4:00 PM','3:00–5:00 PM','5:00–7:00 PM'];
+      const slotRow = document.getElementById('slotRow');
+      slots.forEach(s => {
+        const pill = document.createElement('button');
+        pill.className = 'slot-pill';
+        pill.textContent = s;
+        pill.addEventListener('click', () => {
+          slotRow.querySelectorAll('.slot-pill').forEach(p => p.classList.remove('active'));
+          pill.classList.add('active');
+          selectedSlot = s;
+          updateBookingSummary();
+        });
+        slotRow.appendChild(pill);
+      });
+
+      const bookingForm = document.getElementById('bookingForm');
+      const bookingConfirmation = document.getElementById('bookingConfirmation');
+      const confirmBookingBtn = document.getElementById('confirmBookingBtn');
+      const newBookingBtn = document.getElementById('newBookingBtn');
+      const bookingFormNote = document.getElementById('bookingFormNote');
+      const bookingFormError = document.getElementById('bookingFormError');
+      const bookerNameEl = document.getElementById('bookerName');
+      const bookerIdEl = document.getElementById('bookerId');
+      const bookerEmailEl = document.getElementById('bookerEmail');
+      const bookerPhoneEl = document.getElementById('bookerPhone');
+      bookerNameEl.value = session.name;
+      bookerIdEl.value = session.id;
+
+      function updateBookingSummary(){
+        const summary = document.getElementById('bookingSummary');
+        if(selectedSeatId && selectedSlot){
+          const floorNum = seats[selectedSeatId].floor;
+          summary.innerHTML = `You've reserved seat <strong>${seatLabel(selectedSeatId)}</strong> on <strong>Floor ${floorNum}</strong> for <strong>${selectedSlot}</strong>. Held automatically if you're not checked in within 15 minutes.`;
+        } else if(selectedSeatId){
+          const floorNum = seats[selectedSeatId].floor;
+          summary.innerHTML = `Seat <strong>${seatLabel(selectedSeatId)}</strong> on <strong>Floor ${floorNum}</strong> selected — choose a study window to confirm.`;
+        } else if(selectedSlot){
+          summary.innerHTML = `<strong>${selectedSlot}</strong> selected — pick a seat on the map to confirm.`;
+        } else {
+          summary.textContent = 'Pick a seat and a time to see your reservation here.';
+        }
+        if(selectedSeatId){
+          bookingForm.hidden = false;
+          bookingFormError.hidden = true;
+          if(selectedSlot){ confirmBookingBtn.disabled = false; bookingFormNote.textContent = ''; }
+          else { confirmBookingBtn.disabled = true; bookingFormNote.textContent = 'Pick a study window above to enable confirmation.'; }
+        } else {
+          bookingForm.hidden = true;
+        }
+      }
+
+      confirmBookingBtn.addEventListener('click', async () => {
+        const name = bookerNameEl.value.trim();
+        const id = bookerIdEl.value.trim();
+        const email = bookerEmailEl.value.trim();
+        const emailOk = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        if(!selectedSeatId || !selectedSlot){ bookingFormError.textContent = 'Pick a seat and a study window first.'; bookingFormError.hidden = false; return; }
+        if(!name || !id || !email){ bookingFormError.textContent = 'Name, borrower ID, and email are required.'; bookingFormError.hidden = false; return; }
+        if(!emailOk){ bookingFormError.textContent = 'Enter a valid email address.'; bookingFormError.hidden = false; return; }
+        bookingFormError.hidden = true;
+        confirmBookingBtn.disabled = true;
+        confirmBookingBtn.textContent = 'Confirming…';
+
+        seats = await AIB.getSeats();
+        if(seats[selectedSeatId].state === 'occupied' || seats[selectedSeatId].state === 'booked'){
+          bookingFormError.textContent = 'That seat was just taken — pick another.';
+          bookingFormError.hidden = false;
+          confirmBookingBtn.disabled = false; confirmBookingBtn.textContent = 'Confirm reservation';
+          renderFloor();
+          return;
+        }
+        const ref = AIB.genRef();
+        const floorNum = seats[selectedSeatId].floor;
+        seats[selectedSeatId] = { floor: floorNum, state:'booked', bookedBy:{ name, id, email, phone: bookerPhoneEl.value.trim() }, slot: selectedSlot, ref };
+        await AIB.setSeats(seats);
+
+        document.getElementById('confName').textContent = name;
+        document.getElementById('confSeat').textContent = seatLabel(selectedSeatId) + ' · Floor ' + floorNum;
+        document.getElementById('confSlot').textContent = selectedSlot;
+        document.getElementById('confId').textContent = id;
+        document.getElementById('confRef').textContent = ref;
+        bookingConfirmation.hidden = false;
+        bookingForm.hidden = true;
+        bookerNameEl.value = session.name;
+        bookerIdEl.value = session.id;
+        bookerEmailEl.value = '';
+        bookerPhoneEl.value = '';
+        selectedSeatId = null;
+        confirmBookingBtn.disabled = false;
+        confirmBookingBtn.textContent = 'Confirm reservation';
+        renderFloor();
+        updateBookingSummary();
+      });
+
+      newBookingBtn.addEventListener('click', () => { bookingConfirmation.hidden = true; updateBookingSummary(); });
+
+      async function loadSeats(){
+        seats = await AIB.getSeats();
+        if(selectedSeatId && seats[selectedSeatId] && seats[selectedSeatId].state !== 'free'){
+          selectedSeatId = null;
+        }
+        renderFloorTabs();
+        renderFloor();
+        updateBookingSummary();
+      }
+
+      /* ---------- MY LOANS & FINES ---------- */
+      const lateDaysInput = document.getElementById('lateDays');
+      const rateInput = document.getElementById('ratePerDay');
+      const fineAmount = document.getElementById('fineAmount');
+      function updateFine(){
+        const days = Math.max(0, parseInt(lateDaysInput.value, 10) || 0);
+        const rate = Math.max(0, parseInt(rateInput.value, 10) || 0);
+        fineAmount.textContent = '₹' + (days * rate);
+      }
+      lateDaysInput.addEventListener('input', updateFine);
+      rateInput.addEventListener('input', updateFine);
+      updateFine();
+
+      const historyCards = document.getElementById('historyCards');
+      function loanStatus(loan){
+        if(loan.returned) return { status:'on-time', label:'Returned' };
+        const due = new Date(loan.dueDate);
+        const now = new Date();
+        const diffDays = Math.round((due - now) / 86400000);
+        if(diffDays < 0) return { status:'overdue', label:Math.abs(diffDays) + ' days overdue' };
+        if(diffDays <= 3) return { status:'due-soon', label:'Due in ' + diffDays + ' day' + (diffDays===1?'':'s') };
+        return { status:'on-time', label:'Due ' + loan.dueDate };
+      }
+      async function loadLoans(){
+        const loans = await AIB.getLoans();
+        const mine = loans.filter(l => l.borrowerId.toLowerCase() === session.id.toLowerCase());
+        historyCards.innerHTML = '';
+        if(mine.length === 0){
+          historyCards.innerHTML = '<p class="empty-state">No loans on record for this borrower ID yet.</p>';
+        } else {
+          mine.forEach(h => {
+            const st = loanStatus(h);
+            const div = document.createElement('div');
+            div.className = 'history-card';
+            div.innerHTML = `
+              <span><div class="title">${h.title}</div><div class="meta">Issued ${h.issueDate} · Due ${h.dueDate}</div></span>
+              <span class="status ${st.status}">${st.label}</span>`;
+            historyCards.appendChild(div);
+          });
+        }
+        const active = mine.filter(l => !l.returned);
+        const overdue = active.filter(l => new Date(l.dueDate) < new Date());
+        document.getElementById('cardLoans').textContent = active.length;
+        document.getElementById('cardFine').textContent = overdue.length === 0 ? '₹0' : '₹' + (overdue.length * 5 * 3) + '+';
+      }
+
+      /* ---------- INIT + LIVE POLLING ---------- */
+      async function init(){
+        await loadCatalog();
+        await loadSeats();
+        await loadLoans();
+      }
+      init();
+      setInterval(async () => {
+        await loadCatalog();
+        if(!selectedSeatId) await loadSeats();
+        await loadLoans();
+      }, 5000);
+    }
+
+    function enter(name, id){
+      session.name = name;
+      session.id = id;
+      document.getElementById('navUser').textContent = name + ' · ' + id;
+      document.getElementById('cardName').textContent = name;
+      document.getElementById('cardId').textContent = id;
+      const bn = document.getElementById('bookerName'), bi = document.getElementById('bookerId');
+      if(bn) bn.value = name;
+      if(bi) bi.value = id;
+      if(!started){ started = true; boot(); }
+    }
+
+    return { enter };
+  })();
+
+  /* ================= LIBRARIAN APP ================= */
+  const Librarian = (function(){
+    let session = { name:'librarian' };
+    let started = false;
+    let catalog = [], seats = {}, loans = [];
+    let currentFloor = AIB.FLOORS[0].id;
+    let selectedSeatId = null;
+
+    function boot(){
+      const fmt = (d) => d.toLocaleDateString('en-GB', { day:'2-digit', month:'short', year:'numeric' }).toUpperCase();
+      document.getElementById('libStampToday').textContent = fmt(new Date());
+      const barcode = document.getElementById('libBarcode');
+      for(let i=0;i<38;i++){ const bar = document.createElement('span'); bar.style.height = (Math.random()*14 + 10) + 'px'; barcode.appendChild(bar); }
+
+      /* ---------- STATS ---------- */
+      function renderStats(){
+        const totalCopies = catalog.reduce((s,b) => s + b.copies, 0);
+        const outCopies = catalog.reduce((s,b) => s + (b.copies - b.available), 0);
+        const freeSeats = Object.values(seats).filter(s => s.state === 'free').length;
+        const overdueCount = loans.filter(l => !l.returned && new Date(l.dueDate) < new Date()).length;
+        const stats = [
+          { num: catalog.length, label:'Titles in catalog' },
+          { num: outCopies + ' / ' + totalCopies, label:'Copies on loan' },
+          { num: freeSeats + ' / ' + Object.keys(seats).length, label:'Seats free' },
+          { num: overdueCount, label:'Overdue loans' }
+        ];
+        document.getElementById('statRow').innerHTML = stats.map(s => `<div class="stat-card"><div class="num">${s.num}</div><div class="label">${s.label}</div></div>`).join('');
+      }
+
+      /* ---------- CATALOG ---------- */
+      const catalogList = document.getElementById('catalogList');
+      const issueBookSelect = document.getElementById('issueBook');
+      function renderCatalog(){
+        catalogList.innerHTML = '';
+        if(catalog.length === 0){
+          catalogList.innerHTML = '<p class="empty-state">No titles yet — add the first one above.</p>';
+        } else {
+          catalog.forEach(b => {
+            const row = document.createElement('div');
+            row.className = 'catalog-row';
+            row.innerHTML = `
+              <span>
+                <strong>${b.title}</strong> — <span class="meta">${b.author} · ${b.genre}</span><br>
+                <span class="meta">${b.available} of ${b.copies} available</span>
+              </span>
+              <span class="actions">
+                <button class="link-btn" data-act="remove" data-id="${b.id}">Remove</button>
+              </span>`;
+            catalogList.appendChild(row);
+          });
+          catalogList.querySelectorAll('[data-act="remove"]').forEach(btn => {
+            btn.addEventListener('click', async () => {
+              if(!confirm('Remove this title from the catalog?')) return;
+              catalog = catalog.filter(b => b.id !== btn.dataset.id);
+              await AIB.setCatalog(catalog);
+              renderCatalog(); renderStats();
+            });
+          });
+        }
+        renderIssueOptions();
+      }
+      function renderIssueOptions(){
+        const available = catalog.filter(b => b.available > 0);
+        issueBookSelect.innerHTML = available.length
+          ? available.map(b => `<option value="${b.id}">${b.title} (${b.available} left)</option>`).join('')
+          : '<option value="">No copies currently available</option>';
+      }
+
+      document.getElementById('addBookForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const title = document.getElementById('bkTitle').value.trim();
+        const author = document.getElementById('bkAuthor').value.trim();
+        const genre = document.getElementById('bkGenre').value;
+        const copies = Math.max(1, parseInt(document.getElementById('bkCopies').value, 10) || 1);
+        const why = document.getElementById('bkWhy').value.trim();
+        const msg = document.getElementById('addBookMsg');
+        if(!title || !author){ msg.textContent = 'Title and author are required.'; msg.className = 'form-msg err'; return; }
+        catalog = await AIB.getCatalog();
+        catalog.push({ id: AIB.genId('bk'), title, author, genre, copies, available: copies, why: why || undefined, addedAt: Date.now() });
+        await AIB.setCatalog(catalog);
+        msg.textContent = '"' + title + '" added to the catalog.';
+        msg.className = 'form-msg ok';
+        e.target.reset();
+        document.getElementById('bkCopies').value = 3;
+        renderCatalog(); renderStats();
+      });
+
+      /* ---------- SEATS ---------- */
+      const seatGrid = document.getElementById('libSeatGrid');
+      const floorTabsEl = document.getElementById('libFloorTabs');
+      const floorMetaEl = document.getElementById('libFloorMeta');
+      const seatDetail = document.getElementById('seatDetail');
+      function seatsForFloor(floorId){ return Object.keys(seats).filter(id => seats[id].floor === floorId).sort(); }
+      function seatLabel(seatId){ return seatId.split('-')[1]; }
+
+      function renderFloorTabs(){
+        floorTabsEl.innerHTML = '';
+        AIB.FLOORS.forEach(f => {
+          const tab = document.createElement('button');
+          tab.className = 'floor-tab' + (f.id === currentFloor ? ' active' : '');
+          tab.textContent = 'Floor ' + f.id + ' · ' + (f.rows * f.cols);
+          tab.addEventListener('click', () => { currentFloor = f.id; selectedSeatId = null; renderSeats(); });
+          floorTabsEl.appendChild(tab);
+        });
+      }
+      function renderSeats(){
+        renderFloorTabs();
+        seatGrid.innerHTML = '';
+        seatsForFloor(currentFloor).forEach(seatId => {
+          const seat = document.createElement('button');
+          seat.className = 'seat';
+          seat.dataset.state = seats[seatId].state;
+          seat.textContent = seatLabel(seatId);
+          seat.addEventListener('click', () => selectSeat(seatId));
+          seatGrid.appendChild(seat);
+        });
+        const ids = seatsForFloor(currentFloor);
+        const free = ids.filter(id => seats[id].state === 'free').length;
+        floorMetaEl.textContent = 'Floor ' + currentFloor + ' · ' + ids.length + ' seats · ' + free + ' free';
+        renderSeatDetail();
+      }
+      function selectSeat(seatId){ selectedSeatId = seatId; renderSeatDetail(); }
+      function renderSeatDetail(){
+        if(!selectedSeatId || !seats[selectedSeatId]){ seatDetail.textContent = 'Click any seat to see or release its reservation.'; return; }
+        const s = seats[selectedSeatId];
+        if(s.state === 'free'){
+          seatDetail.innerHTML = `Seat <strong>${seatLabel(selectedSeatId)}</strong> · Floor ${s.floor} is free.<br><button class="btn ghost small" id="markOccBtn" style="margin-top:10px;">Mark occupied (walk-in)</button>`;
+          document.getElementById('markOccBtn').addEventListener('click', async () => { await setSeatState(selectedSeatId, { floor:s.floor, state:'occupied' }); });
+        } else if(s.state === 'occupied'){
+          seatDetail.innerHTML = `Seat <strong>${seatLabel(selectedSeatId)}</strong> · Floor ${s.floor} is occupied (walk-in).<br><button class="btn ghost small" id="freeBtn" style="margin-top:10px;">Free this seat</button>`;
+          document.getElementById('freeBtn').addEventListener('click', async () => { await setSeatState(selectedSeatId, { floor:s.floor, state:'free' }); });
+        } else if(s.state === 'booked'){
+          seatDetail.innerHTML = `
+            <div class="card-row"><span class="label">Reserved for</span><span class="value">${s.bookedBy.name}</span></div>
+            <div class="card-row"><span class="label">Borrower ID</span><span class="value">${s.bookedBy.id}</span></div>
+            <div class="card-row"><span class="label">Window</span><span class="value">${s.slot}</span></div>
+            <div class="card-row"><span class="label">Reference</span><span class="value mono">${s.ref}</span></div>
+            <button class="btn ghost small" id="freeBtn" style="margin-top:10px;width:100%;">Release seat</button>`;
+          document.getElementById('freeBtn').addEventListener('click', async () => { await setSeatState(selectedSeatId, { floor:s.floor, state:'free' }); });
+        }
+      }
+      async function setSeatState(seatId, val){
+        seats = await AIB.getSeats();
+        seats[seatId] = val;
+        await AIB.setSeats(seats);
+        renderSeats(); renderStats();
+      }
+
+      /* ---------- ISSUE A BOOK ---------- */
+      document.getElementById('issueForm').addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const bookId = issueBookSelect.value;
+        const name = document.getElementById('issueName').value.trim();
+        const id = document.getElementById('issueId').value.trim();
+        const period = parseInt(document.getElementById('issuePeriod').value, 10);
+        const msg = document.getElementById('issueMsg');
+        if(!bookId){ msg.textContent = 'No copies available to issue.'; msg.className = 'form-msg err'; return; }
+        if(!name || !id){ msg.textContent = 'Borrower name and ID are required.'; msg.className = 'form-msg err'; return; }
+        catalog = await AIB.getCatalog();
+        const book = catalog.find(b => b.id === bookId);
+        if(!book || book.available <= 0){ msg.textContent = 'That title just ran out of copies — pick another.'; msg.className = 'form-msg err'; renderCatalog(); return; }
+        book.available -= 1;
+        await AIB.setCatalog(catalog);
+        loans = await AIB.getLoans();
+        const issueDate = new Date();
+        const dueDate = new Date(issueDate); dueDate.setDate(dueDate.getDate() + period);
+        loans.push({ ref: AIB.genRef(), title: book.title, borrowerName: name, borrowerId: id, issueDate: issueDate.toISOString().slice(0,10), dueDate: dueDate.toISOString().slice(0,10), returned:false });
+        await AIB.setLoans(loans);
+        msg.textContent = '"' + book.title + '" issued to ' + name + ', due ' + dueDate.toISOString().slice(0,10) + '.';
+        msg.className = 'form-msg ok';
+        e.target.reset();
+        renderCatalog(); renderLoans(); renderStats();
+      });
+
+      /* ---------- LOANS / RETURNS ---------- */
+      const loansTable = document.getElementById('loansTable');
+      function loanStatus(loan){
+        if(loan.returned) return { label:'Returned', ok:true };
+        const diffDays = Math.round((new Date(loan.dueDate) - new Date()) / 86400000);
+        if(diffDays < 0) return { label: Math.abs(diffDays) + ' days late', ok:false };
+        if(diffDays <= 3) return { label:'Due in ' + diffDays + 'd', ok:false };
+        return { label:'On time', ok:true };
+      }
+      function renderLoans(){
+        const active = loans.filter(l => !l.returned).sort((a,b) => new Date(a.dueDate) - new Date(b.dueDate));
+        loansTable.innerHTML = '';
+        if(active.length === 0){
+          loansTable.innerHTML = '<tr><td colspan="5" class="empty-state">No active loans.</td></tr>';
+          return;
+        }
+        active.forEach(l => {
+          const st = loanStatus(l);
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td>${l.title}</td>
+            <td>${l.borrowerName} <span class="meta mono" style="display:block;font-size:0.72rem;color:var(--green-mid);">${l.borrowerId}</span></td>
+            <td>${l.dueDate}</td>
+            <td><span class="badge ${st.ok ? 'ok':''}">${st.label}</span></td>
+            <td><button class="link-btn" data-ref="${l.ref}">Mark returned</button></td>`;
+          loansTable.appendChild(tr);
+        });
+        loansTable.querySelectorAll('[data-ref]').forEach(btn => {
+          btn.addEventListener('click', async () => {
+            loans = await AIB.getLoans();
+            const loan = loans.find(l => l.ref === btn.dataset.ref);
+            if(!loan) return;
+            loan.returned = true;
+            loan.returnDate = new Date().toISOString().slice(0,10);
+            await AIB.setLoans(loans);
+            catalog = await AIB.getCatalog();
+            const book = catalog.find(b => b.title === loan.title);
+            if(book) book.available = Math.min(book.copies, book.available + 1);
+            await AIB.setCatalog(catalog);
+            renderLoans(); renderCatalog(); renderStats();
+          });
+        });
+      }
+
+      const lateDaysInput = document.getElementById('libLateDays');
+      const rateInput = document.getElementById('libRatePerDay');
+      const fineAmount = document.getElementById('libFineAmount');
+      function updateFine(){
+        const days = Math.max(0, parseInt(lateDaysInput.value, 10) || 0);
+        const rate = Math.max(0, parseInt(rateInput.value, 10) || 0);
+        fineAmount.textContent = '₹' + (days * rate);
+      }
+      lateDaysInput.addEventListener('input', updateFine);
+      rateInput.addEventListener('input', updateFine);
+      updateFine();
+
+      /* ---------- INIT + LIVE POLLING ---------- */
+      async function init(){
+        catalog = await AIB.getCatalog();
+        seats = await AIB.getSeats();
+        loans = await AIB.getLoans();
+        renderCatalog(); renderSeats(); renderLoans(); renderStats();
+      }
+      init();
+      setInterval(async () => {
+        catalog = await AIB.getCatalog();
+        seats = await AIB.getSeats();
+        loans = await AIB.getLoans();
+        renderCatalog(); renderSeats(); renderLoans(); renderStats();
+      }, 5000);
+    }
+
+    function enter(name){
+      session.name = name;
+      document.getElementById('navUser').textContent = name + ' · staff';
+      document.getElementById('libCardName').textContent = name.charAt(0).toUpperCase() + name.slice(1);
+      if(!started){ started = true; boot(); }
+    }
+
+    return { enter };
+  })();
+
+  /* ================= START ON LOGIN SCREEN ================= */
+  showScreen('login');
+})();
+</script>
+</body>
+</html>
